@@ -23,9 +23,12 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QStatusBar
 from PyQt5.QtWidgets import QProgressBar
 from PyQt5.QtWidgets import QListWidget
+from PyQt5.QtWidgets import QDialog
 
 from PIL import Image, ImageGrab
 from PIL.ImageQt import ImageQt
+
+from pynput.keyboard import Listener
 
 import sys
 import cv2
@@ -185,17 +188,22 @@ class AppUi(QMainWindow):
         flo = QFormLayout()
         self.input_screen_x = QSpinBox()
         self.input_screen_y = QSpinBox()
+        self._update_pos_hotkey = 'v'
+        self.input_screen_xy_key = QPushButton()
         self.input_treshold = QSpinBox()
         self.input_sensivity = QSpinBox()
         self.input_drink_potions = QCheckBox()
         self.input_drink_delay = QSpinBox()
         self.input_screen_x.setMaximum( QApplication.primaryScreen().size().width() )
         self.input_screen_y.setMaximum( QApplication.primaryScreen().size().height() )
+        self.input_screen_xy_key.clicked.connect(self._change_pos_hotkey)
         self.input_treshold.setMaximum( 255 )
         self.input_sensivity.setMaximum( 999 )
         self.input_drink_delay.setMaximum( 3600 )
         flo.addRow("Coordinate X", self.input_screen_x)
         flo.addRow("Coordinate Y", self.input_screen_y)
+        self.input_screen_xy_key.setText('Change hotkey ({})'.format(self._update_pos_hotkey))
+        flo.addRow("Coordinates to MousePos", self.input_screen_xy_key)
         flo.addRow("Mov. Treshold", self.input_treshold)
         flo.addRow("Sensivity", self.input_sensivity)
         flo.addRow("Drink potions", self.input_drink_potions)
@@ -206,6 +214,15 @@ class AppUi(QMainWindow):
         self.start.setText("Start fishing")
         self.start.clicked.connect(self._on_push_button)
         self.generalLayout.addWidget(self.start)
+
+        self._hotkey = 'f'
+        self._hotkey_listener = Listener(on_press=self._keypress_event)
+        self._hotkey_listener.start()
+
+        self.select_hotkey = QPushButton(self)
+        self.select_hotkey.setText('Change fishing hotkey ({})'.format(self._hotkey))
+        self.select_hotkey.clicked.connect(self._change_hotkey)
+        self.generalLayout.addWidget(self.select_hotkey)
 
         self.save = QPushButton(self)
         self.save.setText("Save this preset")
@@ -235,6 +252,55 @@ class AppUi(QMainWindow):
         self.timer.timeout.connect(self._update_display)
         self.timer.setInterval(66)
         self.timer.start()
+
+    def _keypress_event(self, key):
+        try:
+            if self._hotkey == key.char:
+                self._on_push_button()
+            elif self._update_pos_hotkey == key.char:
+                self._xy_pos_update()
+        except AttributeError:
+            return
+    def _change_hotkey(self):
+        if self._hotkey_listener.running:
+            self._hotkey_listener.stop()
+        
+        self.hotkey_dialog = QDialog(self)
+        self.hotkey_dialog.keyPressEvent = lambda key: self.assign_hotkey(key)
+        self.hotkey_dialog.setWindowTitle('Press your desired hotkey.')
+        self.hotkey_dialog.exec()
+
+        self._hotkey_listener = Listener(on_press=self._keypress_event)
+        self._hotkey_listener.start()
+
+    def assign_hotkey(self, key):
+        if key.text() != '' and key.text() != self._update_pos_hotkey:
+            self._hotkey = key.text()
+        self.hotkey_dialog.close()
+        self.select_hotkey.setText('Change fishing hotkey ({})'.format(self._hotkey))
+    
+    def assign_pos_hotkey(self, key):
+        if key.text() != '' and key.text() != self._hotkey:
+            self._update_pos_hotkey = key.text()
+        self.pos_hotkey_dialog.close()
+        self.input_screen_xy_key.setText('Change hotkey ({})'.format(self._update_pos_hotkey))
+
+    def _change_pos_hotkey(self):
+        if self._hotkey_listener.running:
+            self._hotkey_listener.stop()
+        
+        self.pos_hotkey_dialog = QDialog(self)
+        self.pos_hotkey_dialog.keyPressEvent = lambda key: self.assign_pos_hotkey(key)
+        self.pos_hotkey_dialog.setWindowTitle('Press your desired hotkey.')
+        self.pos_hotkey_dialog.exec()
+
+        self._hotkey_listener = Listener(on_press=self._keypress_event)
+        self._hotkey_listener.start()
+
+    def _xy_pos_update(self):
+        pos = pyautogui.position()
+        self.input_screen_x.setValue(pos.x)
+        self.input_screen_y.setValue(pos.y)
 
     def _update_list_from_config(self):
         self.list.clear() # HAS SIDE EFFECTS ON CONFIG ??
@@ -311,10 +377,12 @@ class AppUi(QMainWindow):
         self.save.setEnabled(state)
         self.input_screen_x.setEnabled(state)
         self.input_screen_y.setEnabled(state)
+        self.input_screen_xy_key.setEnabled(state)
         self.input_treshold.setEnabled(state)
         self.input_sensivity.setEnabled(state)
         self.input_drink_potions.setEnabled(state)
         self.input_drink_delay.setEnabled(state)
+        self.select_hotkey.setEnabled(state)
         self.b_create_preset.setEnabled(state)
         self.b_delete_preset.setEnabled(state)
         self.list.setEnabled(state)
