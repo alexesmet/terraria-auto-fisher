@@ -1,29 +1,29 @@
 #!/usr/bin/env python3
 
-from PyQt5.QtGui import QPixmap, QCursor
-from PyQt5.QtGui import QImage
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QLabel
-from PyQt5.QtWidgets import QCheckBox
-from PyQt5.QtWidgets import QLayout
-from PyQt5.QtWidgets import QFrame
-from PyQt5.QtWidgets import QFormLayout
-from PyQt5.QtWidgets import QHBoxLayout
-from PyQt5.QtWidgets import QGridLayout
-from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QSpinBox
-from PyQt5.QtWidgets import QInputDialog
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QStatusBar
-from PyQt5.QtWidgets import QProgressBar
-from PyQt5.QtWidgets import QListWidget
-from PyQt5.QtWidgets import QDialog
+from PyQt6.QtGui import QPixmap, QCursor
+from PyQt6.QtGui import QImage
+from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QLabel
+from PyQt6.QtWidgets import QCheckBox
+from PyQt6.QtWidgets import QLayout
+from PyQt6.QtWidgets import QFrame
+from PyQt6.QtWidgets import QFormLayout
+from PyQt6.QtWidgets import QHBoxLayout
+from PyQt6.QtWidgets import QGridLayout
+from PyQt6.QtWidgets import QLineEdit
+from PyQt6.QtWidgets import QPushButton
+from PyQt6.QtWidgets import QVBoxLayout
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QSpinBox
+from PyQt6.QtWidgets import QInputDialog
+from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QStatusBar
+from PyQt6.QtWidgets import QProgressBar
+from PyQt6.QtWidgets import QListWidget
+from PyQt6.QtWidgets import QDialog
 
 from PIL import Image, ImageGrab
 from PIL.ImageQt import ImageQt
@@ -162,15 +162,15 @@ class AppUi(QMainWindow):
 
         previews = QHBoxLayout()
         self.label1 = QLabel(self)
-        self.label1.setFrameShape(QFrame.Panel)
-        self.label1.setFrameShadow(QFrame.Sunken)
+        self.label1.setFrameShape(QFrame.Shape.Panel)
+        self.label1.setFrameShadow(QFrame.Shadow.Sunken)
         self.label1.setLineWidth(2)
         self.label1.resize(shift*2, shift*2)
         self.label1.setFixedSize(shift*2, shift*2)
         previews.addWidget(self.label1)
         self.label2 = QLabel(self)
-        self.label2.setFrameShape(QFrame.Panel)
-        self.label2.setFrameShadow(QFrame.Sunken)
+        self.label2.setFrameShape(QFrame.Shape.Panel)
+        self.label2.setFrameShadow(QFrame.Shadow.Sunken)
         self.label2.setLineWidth(2)
         self.label2.setFixedSize(shift*2, shift*2)
         previews.addWidget(self.label2)
@@ -417,7 +417,7 @@ class AppUi(QMainWindow):
 
         # Update second preview
         height, width = preview.shape
-        cv2qimg = QImage(preview.data, width, height, width * 1, QImage.Format_Grayscale8)
+        cv2qimg = QImage(preview.data, width, height, width * 1, QImage.Format.Format_Grayscale8)
         pixmap2 = QPixmap.fromImage(cv2qimg)
         self.label2.setPixmap(pixmap2)
 
@@ -456,7 +456,7 @@ def main():
     app.setStyle('Windows')
     view = AppUi()
     view.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 if __name__ == '__main__':
     main()
