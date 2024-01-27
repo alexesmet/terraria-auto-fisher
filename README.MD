@@ -17,7 +17,7 @@ Incomplete list of required libraries:
 - `configparser`
 - `Pillow`
 
-Install these libraries with `pip`, for example: `pip intall Pillow`.
+To install dependencies run `pip install -r requirements.txt`.
 
 ### Interface
 At the program startup, a retro-styled window appears. 
