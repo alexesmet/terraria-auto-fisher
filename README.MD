@@ -76,5 +76,5 @@ _float_ (thing that goes blup-blup when a fish eats bait)
 1. Equip anti-knockback shield just in case
 2. Build a fishing shelter so no one disturbs you
 3. Build a wall so that background doesn't interfere with the program
-4. Place a couple of torchessothat they are not visible in preview area but also so that the room has enough
-light to be independant from the daylight cycle
+4. Place a couple of torches so that they are not visible in preview area but also so that the room has enough
+light to be independent from the daylight cycle
